@@ -1,8 +1,7 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { ListingService } from './listing.service';
 import { Listing } from './entities/listing.entity';
 import { CreateListingInput } from './dto/create-listing.input';
-import { UpdateListingInput } from './dto/update-listing.input';
 
 @Resolver(() => Listing)
 export class ListingResolver {
@@ -15,28 +14,13 @@ export class ListingResolver {
     return this.listingService.create(createListingInput);
   }
 
-  @Query(() => [Listing], { name: 'listing' })
+  @Query(() => [Listing], { name: 'findAllListings' })
   findAll() {
     return this.listingService.findAll();
   }
 
-  @Query(() => Listing, { name: 'listing' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  @Query(() => Listing, { name: 'findOneListing' })
+  findOne(@Args('id', { type: () => String }) id: string) {
     return this.listingService.findOne(id);
-  }
-
-  @Mutation(() => Listing)
-  updateListing(
-    @Args('updateListingInput') updateListingInput: UpdateListingInput,
-  ) {
-    return this.listingService.update(
-      updateListingInput.id,
-      updateListingInput,
-    );
-  }
-
-  @Mutation(() => Listing)
-  removeListing(@Args('id', { type: () => Int }) id: number) {
-    return this.listingService.remove(id);
   }
 }

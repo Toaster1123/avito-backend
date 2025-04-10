@@ -1,5 +1,10 @@
 import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @ObjectType()
 @Entity()
@@ -23,4 +28,12 @@ export class Listing {
   @Column('text', { array: true })
   @Field(() => [String], { description: 'Изображения объявления' })
   images: string[];
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Field({ description: 'Дата создания объявления' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Field({ description: 'Дата последнего обновления объявления' })
+  updatedAt: Date;
 }

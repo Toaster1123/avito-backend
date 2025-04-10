@@ -17,16 +17,45 @@ type Listing {
 
   """Изображения объявления"""
   images: [String!]!
+
+  """Дата создания объявления"""
+  createdAt: Timestamp!
+
+  """Дата последнего обновления объявления"""
+  updatedAt: Timestamp!
+}
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
+type User {
+  """ID пользователя"""
+  id: ID!
+
+  """Имя пользователя"""
+  name: String!
+
+  """Дата создания пользователя"""
+  createdAt: Timestamp!
+
+  """Дата последнего обновления пользователя"""
+  updatedAt: Timestamp!
 }
 
 type Query {
   listing(id: Int!): Listing!
+  user(id: Int!): User!
 }
 
 type Mutation {
   createListing(createListingInput: CreateListingInput!): Listing!
   updateListing(updateListingInput: UpdateListingInput!): Listing!
   removeListing(id: Int!): Listing!
+  createUser(createUserInput: CreateUserInput!): User!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  removeUser(id: Int!): User!
 }
 
 input CreateListingInput {
@@ -35,6 +64,17 @@ input CreateListingInput {
 }
 
 input UpdateListingInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateUserInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateUserInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!

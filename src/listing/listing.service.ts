@@ -1,26 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { CreateListingInput } from './dto/create-listing.input';
-import { UpdateListingInput } from './dto/update-listing.input';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Listing } from './entities/listing.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ListingService {
-  create(createListingInput: CreateListingInput) {
-    return 'This action adds a new listing';
+  constructor(
+    @InjectRepository(Listing)
+    private readonly listingRepository: Repository<Listing>,
+  ) {}
+
+  public async create(createListingInput: CreateListingInput) {
+    return await this.listingRepository.save(createListingInput);
   }
 
-  findAll() {
-    return `This action returns all listing`;
+  public async findAll() {
+    return await this.listingRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} listing`;
-  }
-
-  update(id: number, updateListingInput: UpdateListingInput) {
-    return `This action updates a #${id} listing`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} listing`;
+  public async findOne(id: string) {
+    return await this.listingRepository.findOne({
+      where: {
+        id,
+      },
+    });
   }
 }
