@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { LoginInput } from './dto/login.input';
 import { RegisterInput } from './dto/register.input';
 import { JwtService } from '@nestjs/jwt';
@@ -18,7 +22,7 @@ export class AuthService {
     const findUser = await this.userService.findByEmail(registerInput.email);
 
     if (findUser) {
-      throw new ConflictException(
+      throw new BadRequestException(
         'Пользователь с таким email уже зарегестрирован',
       );
     }
@@ -37,8 +41,25 @@ export class AuthService {
     return tokens;
   }
 
-  signIn(loginInput: LoginInput) {
-    return 'This action adds a new auth';
+  public async signIn(loginInput: LoginInput) {
+    const findUser = await this.userService.findByEmail(loginInput.email);
+    if (!findUser) {
+      throw new NotFoundException('Пользователь не найден');
+    }
+
+    const verifyPassword = await argon2.verify(
+      findUser.password,
+      loginInput.password,
+    );
+
+    if (!verifyPassword) {
+      throw new BadRequestException('Неверный логин или пароль');
+    }
+
+    const tokens = await this.getTokens(findUser.id, findUser.name);
+    await this.updateRefreshToken(findUser.id, tokens.refreshToken);
+
+    return tokens;
   }
 
   updateRefreshToken(userId: string, refreshToken: string) {
