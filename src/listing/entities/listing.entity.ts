@@ -1,7 +1,10 @@
 import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
+import { User } from 'src/user/entities/user.entity';
 import {
   Column,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -28,6 +31,15 @@ export class Listing {
   @Column('text', { array: true })
   @Field(() => [String], { description: 'Изображения объявления' })
   images: string[];
+
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.listings)
+  @JoinColumn({ name: 'userId' })
+  user: User;
+
+  @Column()
+  @Field({ description: 'ID автора' })
+  userId: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   @Field({ description: 'Дата создания объявления' })

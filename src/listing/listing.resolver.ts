@@ -1,7 +1,15 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Parent,
+  ResolveField,
+} from '@nestjs/graphql';
 import { ListingService } from './listing.service';
 import { Listing } from './entities/listing.entity';
 import { CreateListingInput } from './dto/create-listing.input';
+import { User } from 'src/user/entities/user.entity';
 
 @Resolver(() => Listing)
 export class ListingResolver {
@@ -17,6 +25,11 @@ export class ListingResolver {
   @Query(() => [Listing], { name: 'findAllListings' })
   findAll() {
     return this.listingService.findAll();
+  }
+
+  @ResolveField()
+  getUserListings(@Parent() user: User) {
+    return this.listingService.findAll({ userId: user.id });
   }
 
   @Query(() => Listing, { name: 'findOneListing' })

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateListingInput } from './dto/create-listing.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Listing } from './entities/listing.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 
 @Injectable()
 export class ListingService {
@@ -15,8 +15,10 @@ export class ListingService {
     return await this.listingRepository.save(createListingInput);
   }
 
-  public async findAll() {
-    return await this.listingRepository.find();
+  public async findAll(
+    where?: FindOptionsWhere<Listing> | FindOptionsWhere<Listing>[],
+  ) {
+    return await this.listingRepository.find({ where });
   }
 
   public async findOne(id: string) {

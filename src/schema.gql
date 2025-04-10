@@ -2,6 +2,34 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type User {
+  """ID пользователя"""
+  id: ID!
+
+  """Имя пользователя"""
+  name: String!
+
+  """Email пользователя"""
+  email: String!
+
+  """Password пользователя"""
+  password: String!
+
+  """Password пользователя"""
+  listings: [Listing!]!
+
+  """Дата создания пользователя"""
+  createdAt: Timestamp!
+
+  """Дата последнего обновления пользователя"""
+  updatedAt: Timestamp!
+}
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
 type Listing {
   """Название объявления"""
   id: ID!
@@ -17,6 +45,10 @@ type Listing {
 
   """Изображения объявления"""
   images: [String!]!
+  user: User!
+
+  """ID автора"""
+  userId: String!
 
   """Дата создания объявления"""
   createdAt: Timestamp!
@@ -25,57 +57,40 @@ type Listing {
   updatedAt: Timestamp!
 }
 
-"""
-`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-"""
-scalar Timestamp
-
-type User {
-  """ID пользователя"""
-  id: ID!
-
-  """Имя пользователя"""
-  name: String!
-
-  """Дата создания пользователя"""
-  createdAt: Timestamp!
-
-  """Дата последнего обновления пользователя"""
-  updatedAt: Timestamp!
-}
-
 type Query {
-  listing(id: Int!): Listing!
-  user(id: Int!): User!
+  findAllListings: [Listing!]!
+  getUserListings: [Listing!]!
+  findOneListing(id: String!): Listing!
+  findAllUsers: [User!]!
+  findOneUser(id: String!): User!
 }
 
 type Mutation {
   createListing(createListingInput: CreateListingInput!): Listing!
-  updateListing(updateListingInput: UpdateListingInput!): Listing!
-  removeListing(id: Int!): Listing!
   createUser(createUserInput: CreateUserInput!): User!
-  updateUser(updateUserInput: UpdateUserInput!): User!
-  removeUser(id: Int!): User!
 }
 
 input CreateListingInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
+  """Название объявления"""
+  name: String!
 
-input UpdateListingInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  """Цена объявления"""
+  price: Int!
+
+  """Описание объявления"""
+  description: String!
+
+  """Изображения объявления"""
+  images: [String!]!
 }
 
 input CreateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
+  """Имя пользователя"""
+  name: String!
 
-input UpdateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  """Email пользователя"""
+  email: String!
+
+  """Password пользователя"""
+  password: String!
 }
