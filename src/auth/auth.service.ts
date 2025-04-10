@@ -32,7 +32,7 @@ export class AuthService {
     const createdUser = await this.userService.create({
       ...registerInput,
       password: hashedPassword,
-      refreshToken: '',
+      refreshToken: null,
     });
 
     const tokens = await this.getTokens(createdUser.id, createdUser.name);
@@ -60,6 +60,10 @@ export class AuthService {
     await this.updateRefreshToken(findUser.id, tokens.refreshToken);
 
     return tokens;
+  }
+
+  public async logout(userId: string) {
+    return await this.userService.update({ id: userId, refreshToken: null });
   }
 
   updateRefreshToken(userId: string, refreshToken: string) {

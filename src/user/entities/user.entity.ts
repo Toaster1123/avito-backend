@@ -31,6 +31,10 @@ export class User {
   @OneToMany(() => Listing, (listing) => listing.user)
   listings: Listing[];
 
+  @Column({ nullable: true })
+  @Field({ description: 'Refresh token', nullable: true })
+  refreshToken: string | null;
+
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   @Field({ description: 'Дата создания пользователя' })
   createdAt: Date;

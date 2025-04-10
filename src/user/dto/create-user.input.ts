@@ -11,6 +11,6 @@ export class CreateUserInput {
   @Field({ description: 'Password пользователя' })
   password: string;
 
-  @Field({ description: 'Токен обновления' })
-  refreshToken: string;
+  @Field({ description: 'Токен обновления', nullable: true })
+  refreshToken: string | null;
 }

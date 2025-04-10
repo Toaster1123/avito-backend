@@ -18,6 +18,9 @@ type User {
   """Password пользователя"""
   listings: [Listing!]!
 
+  """Refresh token"""
+  refreshToken: String!
+
   """Дата создания пользователя"""
   createdAt: Timestamp!
 
@@ -59,8 +62,16 @@ type Listing {
 }
 
 type Auth {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  """Access token"""
+  accessToken: String!
+
+  """RefreshToken token"""
+  refreshToken: String!
+}
+
+type Logout {
+  """Сообщение о выходе"""
+  message: String!
 }
 
 type Query {
@@ -75,6 +86,7 @@ type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   signUp(signUpInput: RegisterInput!): Auth!
   signIn(signInInput: RegisterInput!): Auth!
+  logout: Logout!
 }
 
 input CreateListingInput {
@@ -102,7 +114,7 @@ input CreateUserInput {
   password: String!
 
   """Токен обновления"""
-  refreshToken: String!
+  refreshToken: String
 }
 
 input RegisterInput {
