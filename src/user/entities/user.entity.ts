@@ -19,7 +19,7 @@ export class User {
   @Field({ description: 'Имя пользователя' })
   name: string;
 
-  @Column()
+  @Column({ unique: true })
   @Field({ description: 'Email пользователя' })
   email: string;
 

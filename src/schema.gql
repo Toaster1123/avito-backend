@@ -55,11 +55,16 @@ type Listing {
 
   """Дата последнего обновления объявления"""
   updatedAt: Timestamp!
+  getUserListings: Listing!
+}
+
+type Auth {
+  """Example field (placeholder)"""
+  exampleField: Int!
 }
 
 type Query {
   findAllListings: [Listing!]!
-  getUserListings: [Listing!]!
   findOneListing(id: String!): Listing!
   findAllUsers: [User!]!
   findOneUser(id: String!): User!
@@ -68,6 +73,8 @@ type Query {
 type Mutation {
   createListing(createListingInput: CreateListingInput!): Listing!
   createUser(createUserInput: CreateUserInput!): User!
+  signUp(signUpInput: RegisterInput!): Auth!
+  signIn(signInInput: RegisterInput!): Auth!
 }
 
 input CreateListingInput {
@@ -85,6 +92,20 @@ input CreateListingInput {
 }
 
 input CreateUserInput {
+  """Имя пользователя"""
+  name: String!
+
+  """Email пользователя"""
+  email: String!
+
+  """Password пользователя"""
+  password: String!
+
+  """Токен обновления"""
+  refreshToken: String!
+}
+
+input RegisterInput {
   """Имя пользователя"""
   name: String!
 

@@ -27,7 +27,7 @@ export class ListingResolver {
     return this.listingService.findAll();
   }
 
-  @ResolveField()
+  @ResolveField(() => Listing, { name: 'getUserListings' })
   getUserListings(@Parent() user: User) {
     return this.listingService.findAll({ userId: user.id });
   }

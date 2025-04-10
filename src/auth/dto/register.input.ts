@@ -1,7 +1,7 @@
 import { InputType, Field } from '@nestjs/graphql';
 
 @InputType()
-export class CreateUserInput {
+export class RegisterInput {
   @Field({ description: 'Имя пользователя' })
   name: string;
 
@@ -10,7 +10,4 @@ export class CreateUserInput {
 
   @Field({ description: 'Password пользователя' })
   password: string;
-
-  @Field({ description: 'Токен обновления' })
-  refreshToken: string;
 }
