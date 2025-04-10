@@ -1,0 +1,41 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Listing {
+  """Название объявления"""
+  id: ID!
+
+  """Название объявления"""
+  name: String!
+
+  """Цена объявления"""
+  price: Int!
+
+  """Описание объявления"""
+  description: String!
+
+  """Изображения объявления"""
+  images: [String!]!
+}
+
+type Query {
+  listing(id: Int!): Listing!
+}
+
+type Mutation {
+  createListing(createListingInput: CreateListingInput!): Listing!
+  updateListing(updateListingInput: UpdateListingInput!): Listing!
+  removeListing(id: Int!): Listing!
+}
+
+input CreateListingInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateListingInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
