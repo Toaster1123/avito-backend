@@ -76,9 +76,9 @@ type Logout {
 
 type Query {
   findAllListings: [Listing!]!
-  findOneListing(id: String!): Listing!
+  findOneListing(id: ID!): Listing!
   findAllUsers: [User!]!
-  findOneUser(id: String!): User!
+  findOneUser(id: ID!): User!
 }
 
 type Mutation {

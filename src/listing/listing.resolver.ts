@@ -5,6 +5,7 @@ import {
   Args,
   Parent,
   ResolveField,
+  ID,
 } from '@nestjs/graphql';
 import { ListingService } from './listing.service';
 import { Listing } from './entities/listing.entity';
@@ -33,7 +34,7 @@ export class ListingResolver {
   }
 
   @Query(() => Listing, { name: 'findOneListing' })
-  findOne(@Args('id', { type: () => String }) id: string) {
+  findOne(@Args('id', { type: () => ID }) id: string) {
     return this.listingService.findOne(id);
   }
 }
