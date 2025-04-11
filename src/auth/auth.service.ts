@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -104,5 +105,30 @@ export class AuthService {
       accessToken,
       refreshToken,
     };
+  }
+
+  public async refreshTokens(userId: string, refreshToken: string) {
+    const findUser = await this.userService.findOne(userId);
+
+    if (!findUser || !findUser.refreshToken) {
+      throw new ForbiddenException('Доступ запрещен');
+    }
+
+    const verifyRefresh = await argon2.verify(
+      findUser.refreshToken,
+      refreshToken,
+    );
+
+    if (!verifyRefresh) {
+      throw new ForbiddenException('Доступ запрещен');
+    }
+
+    const tokens = await this.getTokens(findUser.id, findUser.name);
+    await this.userService.update({
+      id: findUser.id,
+      refreshToken: tokens.refreshToken,
+    });
+
+    return tokens;
   }
 }

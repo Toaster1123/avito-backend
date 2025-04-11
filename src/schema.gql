@@ -19,7 +19,7 @@ type User {
   listings: [Listing!]!
 
   """Refresh token"""
-  refreshToken: String!
+  refreshToken: String
 
   """Дата создания пользователя"""
   createdAt: Timestamp!

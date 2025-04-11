@@ -31,8 +31,8 @@ export class User {
   @OneToMany(() => Listing, (listing) => listing.user)
   listings: Listing[];
 
-  @Column({ nullable: true })
-  @Field({ description: 'Refresh token', nullable: true })
+  @Column({ type: 'text', nullable: true })
+  @Field(() => String, { description: 'Refresh token', nullable: true })
   refreshToken: string | null;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

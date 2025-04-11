@@ -3,8 +3,11 @@ import { AuthService } from './auth.service';
 import { Auth } from './entities/auth.entity';
 import { RegisterInput } from './dto/register.input';
 import { Logout } from './entities/logout.entity';
-import { Req } from '@nestjs/common';
-import { Request } from 'express';
+import { UseGuards } from '@nestjs/common';
+import { AccessTokenGuard } from 'src/common/guards/access-token.guard';
+import { RefreshTokenGuard } from 'src/common/guards/refresh-token.guard';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { PayloadUser } from 'src/common/types/user-request.type';
 
 @Resolver(() => Auth)
 export class AuthResolver {
@@ -20,8 +23,15 @@ export class AuthResolver {
     return this.authService.signIn(signInInput);
   }
 
+  @UseGuards(AccessTokenGuard)
   @Mutation(() => Logout)
-  logout(@Req() req: Request) {
-    return this.authService.logout(req.user!['sub']);
+  logout(@CurrentUser() user: PayloadUser) {
+    return this.authService.logout(user.sub);
+  }
+
+  @UseGuards(RefreshTokenGuard)
+  @Mutation(() => Auth)
+  refreshTokens(@CurrentUser() user: PayloadUser) {
+    return this.authService.refreshTokens(user.sub, user.refreshToken);
   }
 }
