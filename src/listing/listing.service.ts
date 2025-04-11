@@ -18,7 +18,10 @@ export class ListingService {
   public async findAll(
     where?: FindOptionsWhere<Listing> | FindOptionsWhere<Listing>[],
   ) {
-    return await this.listingRepository.find({ where });
+    return await this.listingRepository.find({
+      where,
+      relations: { user: true },
+    });
   }
 
   public async findOne(id: string) {
@@ -26,6 +29,7 @@ export class ListingService {
       where: {
         id,
       },
+      relations: { user: true },
     });
   }
 }

@@ -33,7 +33,7 @@ export class Listing {
   images: string[];
 
   @Field(() => User)
-  @ManyToOne(() => User, (user) => user.listings)
+  @ManyToOne(() => User, (user) => user.listings, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user: User;
 

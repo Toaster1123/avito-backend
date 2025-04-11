@@ -17,11 +17,16 @@ export class UserService {
   }
 
   public async findAll() {
-    return await this.userRepository.find();
+    return await this.userRepository.find({
+      relations: { listings: true },
+    });
   }
 
   public async findOne(id: string) {
-    return await this.userRepository.findOne({ where: { id } });
+    return await this.userRepository.findOne({
+      where: { id },
+      relations: { listings: true },
+    });
   }
 
   public async findByEmail(email: string) {

@@ -87,6 +87,7 @@ type Mutation {
   signUp(signUpInput: RegisterInput!): Auth!
   signIn(signInInput: RegisterInput!): Auth!
   logout: Logout!
+  refreshTokens: Auth!
 }
 
 input CreateListingInput {
