@@ -21,8 +21,13 @@ export class ListingService {
     offset = 0,
     where?: FindOptionsWhere<Listing> | FindOptionsWhere<Listing>[],
   ) {
+    const baseWhere = Array.isArray(where) ? where : [where ?? {}];
+    const mergedWhere = baseWhere.map((condition) => ({
+      ...condition,
+      active: true,
+    }));
     const [listings, total] = await this.listingRepository.findAndCount({
-      where,
+      where: mergedWhere,
       relations: { user: true },
       take: limit,
       skip: offset,
