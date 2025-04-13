@@ -7,9 +7,7 @@ async function runSeed() {
   const seedService = app.get(SeedService);
 
   try {
-    console.log('Running seed...');
     await seedService.run();
-    console.log('Seed completed successfully');
   } catch (error) {
     console.error('Error running seed:', error);
   } finally {

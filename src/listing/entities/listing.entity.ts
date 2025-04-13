@@ -1,4 +1,5 @@
 import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
+import { Category } from 'src/categories/entities/category.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   Column,
@@ -40,6 +41,18 @@ export class Listing {
   @Column()
   @Field({ description: 'ID автора' })
   userId: string;
+
+  @Field(() => Category, {
+    description: 'Категория объявления',
+  })
+  @ManyToOne(() => Category, (category) => category.listings, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'categoryId' })
+  category: Category;
+
+  @Column({ type: 'uuid' })
+  categoryId: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   @Field({ description: 'Дата создания объявления' })

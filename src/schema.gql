@@ -2,29 +2,37 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type User {
-  """ID пользователя"""
+type Category {
+  """ID категории"""
   id: ID!
 
-  """Имя пользователя"""
+  """Название категории"""
   name: String!
 
-  """Email пользователя"""
-  email: String!
+  """Родительская категория"""
+  parentId: String
 
-  """Password пользователя"""
-  password: String!
-
-  """Password пользователя"""
+  """Объявления в категории"""
   listings: [Listing!]!
+}
 
-  """Refresh token"""
-  refreshToken: String
+type Message {
+  """Уникальный ID сообщения"""
+  id: ID!
 
-  """Дата создания пользователя"""
+  """Диалог, к которому принадлежит сообщение"""
+  dialog: Dialog!
+
+  """Пользователь, который отправил сообщение"""
+  sender: User!
+
+  """Текст сообщения"""
+  text: String!
+
+  """Дата создания сообщения"""
   createdAt: Timestamp!
 
-  """Дата последнего обновления пользователя"""
+  """Дата обновления сообщения"""
   updatedAt: Timestamp!
 }
 
@@ -32,6 +40,90 @@ type User {
 `Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
 """
 scalar Timestamp
+
+type Dialog {
+  """Уникальный ID диалога"""
+  id: ID!
+
+  """Пользователь, который создал диалог"""
+  userSenderDialog: User!
+
+  """Пользователь, которому отправлен диалог"""
+  userReceivedDialog: User!
+
+  """Сообщения в диалоге"""
+  messages: [Message!]
+
+  """Дата создания диалога"""
+  createdAt: Timestamp!
+}
+
+type Review {
+  """ID отзыва"""
+  id: ID!
+
+  """Пользователь, который получил отзыв"""
+  recipient: User!
+
+  """Пользователь, который оставил отзыв"""
+  sender: User!
+
+  """Оценка от 1 до 5"""
+  rating: Float!
+
+  """Текст отзыва"""
+  comment: String
+
+  """Дата создания отзыва"""
+  createdAt: Timestamp!
+}
+
+type User {
+  """ID пользователя"""
+  id: ID!
+
+  """Имя пользователя"""
+  name: String!
+
+  """Оценка от 1 до 5"""
+  rating: Float
+
+  """Фото пользователя"""
+  profileImage: String
+
+  """Email пользователя"""
+  email: String!
+
+  """Password пользователя"""
+  password: String!
+
+  """Refresh token"""
+  refreshToken: String
+
+  """Объявления пользователя"""
+  listings: [Listing!]
+
+  """Отзывы, полученные пользователем"""
+  receivedReviews: [Review!]
+
+  """Отзывы, оставленные пользователем"""
+  sentReviews: [Review!]
+
+  """Диалоги, полученные пользователем"""
+  receivedDialogs: [Dialog!]
+
+  """Сообщения, отправленные пользователем"""
+  messages: [Message!]
+
+  """Диалоги, начатые пользователем"""
+  sentDialogs: [Dialog!]
+
+  """Дата создания пользователя"""
+  createdAt: Timestamp!
+
+  """Дата последнего обновления пользователя"""
+  updatedAt: Timestamp!
+}
 
 type Listing {
   """Название объявления"""
@@ -52,6 +144,9 @@ type Listing {
 
   """ID автора"""
   userId: String!
+
+  """Категория объявления"""
+  category: Category!
 
   """Дата создания объявления"""
   createdAt: Timestamp!
@@ -74,20 +169,43 @@ type Logout {
   message: String!
 }
 
+type Chat {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 type Query {
   findAllListings: [Listing!]!
   findOneListing(id: ID!): Listing!
   findAllUsers: [User!]!
   findOneUser(id: ID!): User!
+  reviews: [Review]!
+  review(id: String!): Review
+  chat(id: Int!): Chat!
+  categories: [Category!]!
+  category(id: Int!): Category!
+  messages: [Message]!
+  message(id: String!): Message
 }
 
 type Mutation {
   createListing(createListingInput: CreateListingInput!): Listing!
   createUser(createUserInput: CreateUserInput!): User!
+  addReview(userId: String!, createReviewInput: CreateReviewInput!): Review!
+  createReview(createReviewInput: CreateReviewInput!): Review!
+  updateReview(updateReviewInput: UpdateReviewInput!): Review!
+  removeReview(id: String!): Review!
   signUp(signUpInput: RegisterInput!): Auth!
   signIn(signInInput: RegisterInput!): Auth!
   logout: Logout!
   refreshTokens: Auth!
+  createChat(createChatInput: CreateChatInput!): Chat!
+  updateChat(updateChatInput: UpdateChatInput!): Chat!
+  removeChat(id: Int!): Chat!
+  createCategory(createCategoryInput: CreateCategoryInput!): Category!
+  createMessage(createMessageInput: CreateMessageInput!): Message!
+  updateMessage(updateMessageInput: UpdateMessageInput!): Message!
+  removeMessage(id: String!): Message!
 }
 
 input CreateListingInput {
@@ -118,6 +236,37 @@ input CreateUserInput {
   refreshToken: String
 }
 
+input CreateReviewInput {
+  """ID пользователя, который получил отзыв"""
+  recipientId: String!
+
+  """ID пользователя, который оставил отзыв"""
+  senderId: String!
+
+  """Оценка от 1 до 5"""
+  rating: Int!
+
+  """Текст отзыва"""
+  comment: String
+}
+
+input UpdateReviewInput {
+  """ID пользователя, который получил отзыв"""
+  recipientId: String
+
+  """ID пользователя, который оставил отзыв"""
+  senderId: String
+
+  """Оценка от 1 до 5"""
+  rating: Int
+
+  """Текст отзыва"""
+  comment: String
+
+  """ID отзыва"""
+  id: String!
+}
+
 input RegisterInput {
   """Имя пользователя"""
   name: String!
@@ -127,4 +276,48 @@ input RegisterInput {
 
   """Password пользователя"""
   password: String!
+}
+
+input CreateChatInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateChatInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateCategoryInput {
+  """Название категории"""
+  name: String!
+
+  """Родительская категория"""
+  parentId: String
+}
+
+input CreateMessageInput {
+  """ID диалога"""
+  dialogId: ID!
+
+  """ID отправителя"""
+  senderId: ID!
+
+  """Текст сообщения"""
+  text: String!
+}
+
+input UpdateMessageInput {
+  """ID диалога"""
+  dialogId: ID
+
+  """ID отправителя"""
+  senderId: ID
+
+  """Текст сообщения"""
+  text: String
+
+  """ID сообщения"""
+  id: ID!
 }
