@@ -1,8 +1,11 @@
 import { CreateListingInput } from './create-listing.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { InputType, Field, PartialType, ID } from '@nestjs/graphql';
 
 @InputType()
 export class UpdateListingInput extends PartialType(CreateListingInput) {
-  @Field(() => Int)
-  id: number;
+  @Field(() => ID)
+  id: string;
+
+  @Field({ nullable: true, description: 'Активно ли объявление' })
+  active?: boolean;
 }

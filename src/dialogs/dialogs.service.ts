@@ -61,6 +61,24 @@ export class DialogsService {
     return dialog;
   }
 
+  public async findUserDialogs(userId: string): Promise<Dialog[]> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
+      throw new NotFoundException(`Пользователь с ID ${userId} не найден`);
+    }
+
+    return this.dialogRepository.find({
+      where: [
+        { userSenderDialog: { id: userId } },
+        { userReceivedDialog: { id: userId } },
+      ],
+      relations: ['userSenderDialog', 'userReceivedDialog', 'messages'],
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+  }
+
   public async update(
     id: string,
     updateDialogInput: UpdateDialogInput,

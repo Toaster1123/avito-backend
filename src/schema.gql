@@ -145,15 +145,26 @@ type Listing {
   """ID автора"""
   userId: String!
 
+  """Активно ли объявление"""
+  active: Boolean!
+
   """Категория объявления"""
   category: Category!
+
+  """Город"""
+  city: String!
 
   """Дата создания объявления"""
   createdAt: Timestamp!
 
   """Дата последнего обновления объявления"""
   updatedAt: Timestamp!
-  getUserListings: Listing!
+  getUserListings(limit: Int, offset: Int): ListingPaginationResult!
+}
+
+type ListingPaginationResult {
+  listings: [Listing!]!
+  hasMore: Boolean!
 }
 
 type Auth {
@@ -169,27 +180,24 @@ type Logout {
   message: String!
 }
 
-type Chat {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
 type Query {
-  findAllListings: [Listing!]!
+  findAllListings(limit: Int, offset: Int): ListingPaginationResult!
   findOneListing(id: ID!): Listing!
   findAllUsers: [User!]!
   findOneUser(id: ID!): User!
   reviews: [Review]!
   review(id: String!): Review
-  chat(id: Int!): Chat!
   categories: [Category!]!
   category(id: Int!): Category!
-  messages: [Message]!
+  messagesByDialog(dialogId: String!, limit: Int, offset: Int): [Message!]!
   message(id: String!): Message
 }
 
 type Mutation {
   createListing(createListingInput: CreateListingInput!): Listing!
+  updateListingActiveStatus(updateListingActiveInput: UpdateListingInput!): Listing!
+  updateListing(updateListingInput: UpdateListingInput!): Listing!
+  removeListing(id: ID!): Boolean!
   createUser(createUserInput: CreateUserInput!): User!
   addReview(userId: String!, createReviewInput: CreateReviewInput!): Review!
   createReview(createReviewInput: CreateReviewInput!): Review!
@@ -199,9 +207,6 @@ type Mutation {
   signIn(signInInput: RegisterInput!): Auth!
   logout: Logout!
   refreshTokens: Auth!
-  createChat(createChatInput: CreateChatInput!): Chat!
-  updateChat(updateChatInput: UpdateChatInput!): Chat!
-  removeChat(id: Int!): Chat!
   createCategory(createCategoryInput: CreateCategoryInput!): Category!
   createMessage(createMessageInput: CreateMessageInput!): Message!
   updateMessage(updateMessageInput: UpdateMessageInput!): Message!
@@ -220,6 +225,24 @@ input CreateListingInput {
 
   """Изображения объявления"""
   images: [String!]!
+}
+
+input UpdateListingInput {
+  """Название объявления"""
+  name: String
+
+  """Цена объявления"""
+  price: Int
+
+  """Описание объявления"""
+  description: String
+
+  """Изображения объявления"""
+  images: [String!]
+  id: ID!
+
+  """Активно ли объявление"""
+  active: Boolean
 }
 
 input CreateUserInput {
@@ -276,17 +299,6 @@ input RegisterInput {
 
   """Password пользователя"""
   password: String!
-}
-
-input CreateChatInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateChatInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
 }
 
 input CreateCategoryInput {

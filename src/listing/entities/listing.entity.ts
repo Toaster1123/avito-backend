@@ -42,6 +42,10 @@ export class Listing {
   @Field({ description: 'ID автора' })
   userId: string;
 
+  @Column({ default: true })
+  @Field({ description: 'Активно ли объявление' })
+  active: boolean;
+
   @Field(() => Category, {
     description: 'Категория объявления',
   })
@@ -50,6 +54,10 @@ export class Listing {
   })
   @JoinColumn({ name: 'categoryId' })
   category: Category;
+
+  @Column()
+  @Field({ description: 'Город' })
+  city: string;
 
   @Column({ type: 'uuid' })
   categoryId: string;

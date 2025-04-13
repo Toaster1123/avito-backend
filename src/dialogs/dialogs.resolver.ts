@@ -27,6 +27,11 @@ export class DialogsResolver {
     return this.dialogsService.findOne(id);
   }
 
+  @Query(() => [Dialog])
+  async getUserDialogs(@Args('userId', { type: () => String }) userId: string) {
+    return this.dialogsService.findUserDialogs(userId);
+  }
+
   @Mutation(() => Dialog, { name: 'updateDialog' })
   async updateDialog(
     @Args('updateDialogInput') updateDialogInput: UpdateDialogInput,

@@ -39,9 +39,22 @@ export class MessagesService {
     return this.messageRepository.save(message);
   }
 
-  public async findAll(): Promise<Message[]> {
+  public async findByDialog(
+    dialogId: string,
+    limit = 20,
+    offset = 0,
+  ): Promise<Message[]> {
+    const dialog = await this.dialogRepository.findOneBy({ id: dialogId });
+    if (!dialog) {
+      throw new NotFoundException(`Диалог с ID ${dialogId} не найден`);
+    }
+
     return this.messageRepository.find({
-      relations: ['dialog', 'sender'],
+      where: { dialog: { id: dialogId } },
+      relations: ['sender'],
+      order: { createdAt: 'DESC' },
+      skip: offset,
+      take: limit,
     });
   }
 

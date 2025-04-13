@@ -13,8 +13,6 @@ import { MessagesModule } from './messages/messages.module';
 import { DialogsModule } from './dialogs/dialogs.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { CategoriesModule } from './categories/categories.module';
-import { ChatService } from './chat/chat.service';
-import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -52,12 +50,10 @@ import { ChatModule } from './chat/chat.module';
     UserModule,
     AuthModule,
     SeedModule,
-    ChatModule,
     CategoriesModule,
     ReviewsModule,
     DialogsModule,
     MessagesModule,
   ],
-  providers: [ChatService],
 })
 export class AppModule {}

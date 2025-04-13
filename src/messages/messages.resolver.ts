@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { MessagesService } from './messages.service';
 import { Message } from './entities/message.entity';
 import { CreateMessageInput } from './dto/create-message.input';
@@ -15,9 +15,17 @@ export class MessagesResolver {
     return this.messagesService.create(createMessageInput);
   }
 
-  @Query(() => [Message], { name: 'messages', nullable: 'items' })
-  async findAll(): Promise<Message[]> {
-    return this.messagesService.findAll();
+  @Query(() => [Message], { name: 'messagesByDialog' })
+  async findByDialog(
+    @Args('dialogId', { type: () => String }) dialogId: string,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+  ): Promise<Message[]> {
+    return this.messagesService.findByDialog(
+      dialogId,
+      limit ?? 20,
+      offset ?? 0,
+    );
   }
 
   @Query(() => Message, { name: 'message', nullable: true })

@@ -20,30 +20,47 @@ export class SeedService {
 
   public async run() {
     await this.clearListings();
+    const usersData = Array(140)
+      .fill(null)
+      .map(() => {
+        return {
+          name: faker.name.firstName(),
+          email: faker.internet.email(),
+          password: faker.internet.password(),
+          refreshToken: null,
+          rating: null,
+        };
+      });
 
-    const createdUser = await this.userRepository.save({
-      name: 'artem',
-      email: 'artem@mail.com',
-      password: 'password',
-      refreshToken: null,
-      rating: null,
-    });
+    const createdUsers = await this.userRepository.save([
+      ...usersData,
+      {
+        name: 'artem',
+        email: 'artem@mail.com',
+        password: 'password',
+        refreshToken: null,
+        rating: null,
+      },
+    ]);
 
     const createdCategory = await this.categoryRepository.save(categories);
-    const listingsData = Array(40)
+    const listingsData = Array(164)
       .fill(null)
       .map(() => {
         const categoryRelations =
           createdCategory[Math.floor(Math.random() * createdCategory.length)];
+        const userRelations =
+          createdUsers[Math.floor(Math.random() * createdUsers.length)];
         return {
           name: faker.commerce.productName(),
           price: Math.floor(
-            parseFloat(faker.commerce.price({ min: 200, max: 43000 })),
+            parseFloat(faker.commerce.price({ min: 200, max: 44000 })),
           ),
           description: faker.lorem.paragraph(),
           images: [faker.image.url(), faker.image.url()],
-          userId: createdUser.id,
-          user: createdUser,
+          userId: userRelations.id,
+          user: userRelations,
+          city: faker.location.city(),
           categoryId: categoryRelations.id,
           category: categoryRelations,
         };
