@@ -52,7 +52,7 @@ export class SeedService {
         const userRelations =
           createdUsers[Math.floor(Math.random() * createdUsers.length)];
 
-        const randomImages = Array(Math.floor(Math.random() * 10))
+        const randomImages = Array(Math.floor(Math.random() * (10 - 1) + 1))
           .fill(null)
           .map(
             () =>
