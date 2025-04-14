@@ -40,7 +40,7 @@ import { CategoriesModule } from './categories/categories.module';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        // synchronize: true,
+        synchronize: true,
         ssl: {
           rejectUnauthorized: false,
         },

@@ -51,13 +51,21 @@ export class SeedService {
           createdCategory[Math.floor(Math.random() * createdCategory.length)];
         const userRelations =
           createdUsers[Math.floor(Math.random() * createdUsers.length)];
+
+        const randomImages = Array(Math.floor(Math.random() * 10))
+          .fill(null)
+          .map(
+            () =>
+              `https://cataas.com/cat?width=236&height=236&random=${Math.random()}`,
+          );
+
         return {
           name: faker.commerce.productName(),
           price: Math.floor(
             parseFloat(faker.commerce.price({ min: 200, max: 44000 })),
           ),
           description: faker.lorem.paragraph(),
-          images: [faker.image.url(), faker.image.url()],
+          images: randomImages,
           userId: userRelations.id,
           user: userRelations,
           city: faker.location.city(),
