@@ -52,42 +52,55 @@ export class SeedService {
 
     const listingCount = 172;
     const createdCategory = await this.categoryRepository.save(categories);
-    let imageIndex = 0;
+
     const imagesUrl = `https://cataas.com/api/cats?limit=${listingCount * 10}`;
-
     const response = await fetch(imagesUrl);
-    const imagesData = (await response.json()) as CatImage[];
+    const imagesArray = (await response.json()) as CatImage[];
 
-    const listingsData = Array(listingCount)
-      .fill(null)
-      .map(() => {
-        const categoryRelations =
-          createdCategory[Math.floor(Math.random() * createdCategory.length)];
-        const userRelations =
-          createdUsers[Math.floor(Math.random() * createdUsers.length)];
+    let imageIndex = -1;
 
-        const randomImages = Array(Math.floor(Math.random() * (10 - 1) + 1))
-          .fill(null)
-          .map(() => {
-            const imageByIndex = imagesData[imageIndex].id;
-            imageIndex++;
-            return `https://cataas.com/cat/${imageByIndex}`;
-          });
+    const listingsData = await Promise.all(
+      Array(listingCount)
+        .fill(null)
+        .map(() => {
+          const categoryRelations =
+            createdCategory[Math.floor(Math.random() * createdCategory.length)];
+          const userRelations =
+            createdUsers[Math.floor(Math.random() * createdUsers.length)];
 
-        return {
-          name: faker.commerce.productName(),
-          price: Math.floor(
-            parseFloat(faker.commerce.price({ min: 200, max: 44000 })),
-          ),
-          description: faker.lorem.paragraph(),
-          images: randomImages,
-          userId: userRelations.id,
-          user: userRelations,
-          city: faker.location.city(),
-          categoryId: categoryRelations.id,
-          category: categoryRelations,
-        };
-      });
+          const sortedImages = Array(Math.floor(Math.random() * (10 - 1) + 1))
+            .fill(null)
+            .map(() => {
+              while (
+                imageIndex < imagesArray.length - 1 &&
+                imagesArray[imageIndex + 1]?.mimetype !== 'image/jpeg' &&
+                imagesArray[imageIndex + 1]?.mimetype !== 'image/png'
+              ) {
+                imageIndex++;
+              }
+              if (imageIndex < imagesArray.length - 1) {
+                imageIndex++;
+                return `https://cataas.com/cat/${imagesArray[imageIndex].id}`;
+              }
+              return null;
+            })
+            .filter((item) => item !== null);
+
+          return {
+            name: faker.commerce.productName(),
+            price: Math.floor(
+              parseFloat(faker.commerce.price({ min: 200, max: 44000 })),
+            ),
+            description: faker.lorem.paragraph(),
+            images: sortedImages,
+            userId: userRelations.id,
+            user: userRelations,
+            city: faker.location.city(),
+            categoryId: categoryRelations.id,
+            category: categoryRelations,
+          };
+        }),
+    );
 
     await this.listingRepository.save(listingsData);
   }
