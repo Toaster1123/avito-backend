@@ -7,6 +7,13 @@ import { faker } from '@faker-js/faker/locale/ru';
 import { Category } from 'src/categories/entities/category.entity';
 import { categories } from './constants';
 
+interface CatImage {
+  id: string;
+  tags: string[];
+  mimetype: string;
+  createdAt: Date;
+}
+
 @Injectable()
 export class SeedService {
   constructor(
@@ -43,8 +50,15 @@ export class SeedService {
       },
     ]);
 
+    const listingCount = 172;
     const createdCategory = await this.categoryRepository.save(categories);
-    const listingsData = Array(164)
+    let imageIndex = 0;
+    const imagesUrl = `https://cataas.com/api/cats?limit=${listingCount * 10}`;
+
+    const response = await fetch(imagesUrl);
+    const imagesData = (await response.json()) as CatImage[];
+
+    const listingsData = Array(listingCount)
       .fill(null)
       .map(() => {
         const categoryRelations =
@@ -54,10 +68,11 @@ export class SeedService {
 
         const randomImages = Array(Math.floor(Math.random() * (10 - 1) + 1))
           .fill(null)
-          .map(
-            () =>
-              `https://cataas.com/cat?width=236&height=236&random=${Math.random()}`,
-          );
+          .map(() => {
+            const imageByIndex = imagesData[imageIndex].id;
+            imageIndex++;
+            return `https://cataas.com/cat/${imageByIndex}`;
+          });
 
         return {
           name: faker.commerce.productName(),
