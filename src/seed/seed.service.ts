@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { faker } from '@faker-js/faker/locale/ru';
 import { Category } from 'src/categories/entities/category.entity';
 import { categories } from './constants';
+import { Review } from 'src/reviews/entities/review.entity';
 
 interface CatImage {
   id: string;
@@ -23,11 +24,18 @@ export class SeedService {
     private userRepository: Repository<User>,
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
+    @InjectRepository(Review)
+    private reviewRepository: Repository<Review>,
   ) {}
 
   public async run() {
     await this.clearListings();
-    const usersData = Array(140)
+    const listingCount = 243;
+    let imageIndex = -1;
+    const createdUserLength = 140;
+
+    //Пользователи
+    const usersData = Array(createdUserLength)
       .fill(null)
       .map(() => {
         return {
@@ -38,7 +46,6 @@ export class SeedService {
           rating: null,
         };
       });
-
     const createdUsers = await this.userRepository.save([
       ...usersData,
       {
@@ -50,14 +57,50 @@ export class SeedService {
       },
     ]);
 
-    const listingCount = 172;
+    //Отзывы
+    const reviews = Array(94)
+      .fill(null)
+      .map(() => {
+        const senderId = Math.floor(Math.random() * createdUsers.length);
+        const sender = createdUsers[senderId];
+
+        let recipientId = Math.floor(Math.random() * createdUsers.length);
+        while (recipientId === senderId) {
+          recipientId = Math.floor(Math.random() * createdUsers.length);
+        }
+        const recipient = createdUsers[recipientId];
+        return {
+          recipient,
+          sender,
+          rating: Math.floor(Math.random() * 5 + 1),
+          comment: faker.lorem.sentence({ min: 1, max: 30 }),
+        };
+      });
+    await this.reviewRepository.save(reviews);
+
+    //Обновление пользователей
+    for (const user of createdUsers) {
+      const received = reviews.filter(
+        (review) => review.recipient.id === user.id,
+      );
+      if (received.length > 0) {
+        const avgRating =
+          received.reduce((acc, review) => acc + review.rating, 0) /
+          received.length;
+
+        await this.userRepository.update(user.id, {
+          rating: parseFloat(avgRating.toFixed(2)),
+        });
+      }
+    }
+
+    //Категории
     const createdCategory = await this.categoryRepository.save(categories);
 
+    //Обьявления
     const imagesUrl = `https://cataas.com/api/cats?limit=${listingCount * 10}`;
     const response = await fetch(imagesUrl);
     const imagesArray = (await response.json()) as CatImage[];
-
-    let imageIndex = -1;
 
     const listingsData = await Promise.all(
       Array(listingCount)
@@ -98,10 +141,10 @@ export class SeedService {
             city: faker.location.city(),
             categoryId: categoryRelations.id,
             category: categoryRelations,
+            active: Math.random() > 0.8,
           };
         }),
     );
-
     await this.listingRepository.save(listingsData);
   }
 
