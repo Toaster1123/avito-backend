@@ -30,8 +30,9 @@ export class ListingResolver {
   findAllListings(
     @Args('limit', { type: () => Int, nullable: true }) limit = 20,
     @Args('offset', { type: () => Int, nullable: true }) offset = 0,
+    @Args('active', { nullable: true, type: () => Boolean }) active?: boolean,
   ) {
-    return this.listingService.findAll(limit, offset);
+    return this.listingService.findAll(limit, offset, undefined, active);
   }
 
   @ResolveField(() => ListingPaginationResult, { name: 'getUserListings' })

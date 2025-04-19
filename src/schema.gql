@@ -181,7 +181,7 @@ type Logout {
 }
 
 type Query {
-  findAllListings(limit: Int, offset: Int): ListingPaginationResult!
+  findAllListings(limit: Int, offset: Int, active: Boolean): ListingPaginationResult!
   findOneListing(id: ID!): Listing!
   findAllUsers: [User!]!
   findOneUser(id: ID!): User!

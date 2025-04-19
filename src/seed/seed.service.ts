@@ -39,7 +39,7 @@ export class SeedService {
       .fill(null)
       .map(() => {
         return {
-          name: faker.name.firstName(),
+          name: faker.person.firstName(),
           email: faker.internet.email(),
           password: faker.internet.password(),
           refreshToken: null,

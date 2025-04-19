@@ -22,7 +22,7 @@ export class User {
   @Field({ description: 'Имя пользователя' })
   name: string;
 
-  @Column({ type: 'decimal', precision: 1, scale: 2, default: null })
+  @Column({ type: 'decimal', precision: 3, scale: 2, default: null })
   @Field(() => Number, { description: 'Оценка от 1 до 5', nullable: true })
   rating: number | null;
 
@@ -42,7 +42,7 @@ export class User {
   @Field(() => String, { description: 'Refresh token', nullable: true })
   refreshToken: string | null;
 
-  @OneToMany(() => Listing, (listing) => listing.user)
+  @OneToMany(() => Listing, (listing) => listing.user, { eager: true })
   @Field(() => [Listing], {
     description: 'Объявления пользователя',
     nullable: true,

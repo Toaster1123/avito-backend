@@ -20,11 +20,12 @@ export class ListingService {
     limit = 20,
     offset = 0,
     where?: FindOptionsWhere<Listing> | FindOptionsWhere<Listing>[],
+    active?: boolean,
   ) {
     const baseWhere = Array.isArray(where) ? where : [where ?? {}];
     const mergedWhere = baseWhere.map((condition) => ({
       ...condition,
-      active: true,
+      ...(active !== undefined && { active }),
     }));
     const [listings, total] = await this.listingRepository.findAndCount({
       where: mergedWhere,
