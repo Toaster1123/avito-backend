@@ -17,4 +17,7 @@ export class CreateReviewInput {
 
   @Field(() => String, { nullable: true, description: 'Текст отзыва' })
   comment?: string;
+
+  @Field(() => String)
+  listingId: string;
 }

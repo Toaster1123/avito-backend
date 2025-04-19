@@ -15,7 +15,7 @@ export class ReviewsResolver {
     return this.reviewsService.create(createReviewInput);
   }
 
-  @Query(() => [Review], { name: 'reviews', nullable: 'items' })
+  @Query(() => [Review], { name: 'reviews', nullable: true })
   async findAll(): Promise<Review[]> {
     return this.reviewsService.findAll();
   }
@@ -23,7 +23,7 @@ export class ReviewsResolver {
   @Query(() => Review, { name: 'review', nullable: true })
   async findOne(
     @Args('id', { type: () => String }) id: string,
-  ): Promise<Review | null> {
+  ): Promise<Review> {
     return this.reviewsService.findOne(id);
   }
 

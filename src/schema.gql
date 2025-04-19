@@ -58,26 +58,6 @@ type Dialog {
   createdAt: Timestamp!
 }
 
-type Review {
-  """ID отзыва"""
-  id: ID!
-
-  """Пользователь, который получил отзыв"""
-  recipient: User!
-
-  """Пользователь, который оставил отзыв"""
-  sender: User!
-
-  """Оценка от 1 до 5"""
-  rating: Float!
-
-  """Текст отзыва"""
-  comment: String
-
-  """Дата создания отзыва"""
-  createdAt: Timestamp!
-}
-
 type User {
   """ID пользователя"""
   id: ID!
@@ -125,6 +105,32 @@ type User {
   updatedAt: Timestamp!
 }
 
+type Review {
+  """ID отзыва"""
+  id: ID!
+
+  """Пользователь, который получил отзыв"""
+  recipient: User!
+
+  """Пользователь, который оставил отзыв"""
+  sender: User!
+
+  """Объявление, к которому относится отзыв"""
+  listing: Listing!
+
+  """ID объявления"""
+  listingId: String
+
+  """Оценка от 1 до 5"""
+  rating: Float!
+
+  """Текст отзыва"""
+  comment: String
+
+  """Дата создания отзыва"""
+  createdAt: Timestamp!
+}
+
 type Listing {
   """Название объявления"""
   id: ID!
@@ -153,6 +159,9 @@ type Listing {
 
   """Город"""
   city: String!
+
+  """Отзывы к объявлению"""
+  reviews: [Review!]
 
   """Дата создания объявления"""
   createdAt: Timestamp!
@@ -185,7 +194,7 @@ type Query {
   findOneListing(id: ID!): Listing!
   findAllUsers: [User!]!
   findOneUser(id: ID!): User!
-  reviews: [Review]!
+  reviews: [Review!]
   review(id: String!): Review
   categories: [Category!]!
   category(id: Int!): Category!
@@ -271,6 +280,7 @@ input CreateReviewInput {
 
   """Текст отзыва"""
   comment: String
+  listingId: String!
 }
 
 input UpdateReviewInput {
@@ -285,6 +295,7 @@ input UpdateReviewInput {
 
   """Текст отзыва"""
   comment: String
+  listingId: String
 
   """ID отзыва"""
   id: String!

@@ -15,6 +15,12 @@ interface CatImage {
   createdAt: Date;
 }
 
+function getRandomDate(start: Date, end: Date): Date {
+  return new Date(
+    start.getTime() + Math.random() * (end.getTime() - start.getTime()),
+  );
+}
+
 @Injectable()
 export class SeedService {
   constructor(
@@ -30,22 +36,22 @@ export class SeedService {
 
   public async run() {
     await this.clearListings();
-    const listingCount = 243;
-    let imageIndex = -1;
-    const createdUserLength = 140;
 
-    //Пользователи
+    const listingCount = 243;
+    const createdUserLength = 140;
+    let imageIndex = -1;
+
+    // Создание пользователей
     const usersData = Array(createdUserLength)
       .fill(null)
-      .map(() => {
-        return {
-          name: faker.person.firstName(),
-          email: faker.internet.email(),
-          password: faker.internet.password(),
-          refreshToken: null,
-          rating: null,
-        };
-      });
+      .map(() => ({
+        name: faker.person.firstName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+        refreshToken: null,
+        rating: null,
+      }));
+
     const createdUsers = await this.userRepository.save([
       ...usersData,
       {
@@ -57,51 +63,15 @@ export class SeedService {
       },
     ]);
 
-    //Отзывы
-    const reviews = Array(94)
-      .fill(null)
-      .map(() => {
-        const senderId = Math.floor(Math.random() * createdUsers.length);
-        const sender = createdUsers[senderId];
-
-        let recipientId = Math.floor(Math.random() * createdUsers.length);
-        while (recipientId === senderId) {
-          recipientId = Math.floor(Math.random() * createdUsers.length);
-        }
-        const recipient = createdUsers[recipientId];
-        return {
-          recipient,
-          sender,
-          rating: Math.floor(Math.random() * 5 + 1),
-          comment: faker.lorem.sentence({ min: 1, max: 30 }),
-        };
-      });
-    await this.reviewRepository.save(reviews);
-
-    //Обновление пользователей
-    for (const user of createdUsers) {
-      const received = reviews.filter(
-        (review) => review.recipient.id === user.id,
-      );
-      if (received.length > 0) {
-        const avgRating =
-          received.reduce((acc, review) => acc + review.rating, 0) /
-          received.length;
-
-        await this.userRepository.update(user.id, {
-          rating: parseFloat(avgRating.toFixed(2)),
-        });
-      }
-    }
-
-    //Категории
+    // Создание категорий
     const createdCategory = await this.categoryRepository.save(categories);
 
-    //Обьявления
+    // Получение изображений
     const imagesUrl = `https://cataas.com/api/cats?limit=${listingCount * 10}`;
     const response = await fetch(imagesUrl);
     const imagesArray = (await response.json()) as CatImage[];
 
+    // Создание объявлений
     const listingsData = await Promise.all(
       Array(listingCount)
         .fill(null)
@@ -145,10 +115,59 @@ export class SeedService {
           };
         }),
     );
-    await this.listingRepository.save(listingsData);
+    const createdListings = await this.listingRepository.save(listingsData);
+
+    // Создание отзывов
+    const reviews = Array(94)
+      .fill(null)
+      .map(() => {
+        const listing =
+          createdListings[Math.floor(Math.random() * createdListings.length)];
+
+        const recipient = listing.user;
+
+        let senderId = Math.floor(Math.random() * createdUsers.length);
+        while (createdUsers[senderId].id === recipient.id) {
+          senderId = Math.floor(Math.random() * createdUsers.length);
+        }
+        const sender = createdUsers[senderId];
+
+        return {
+          recipient,
+          sender,
+          rating: Math.floor(Math.random() * 5 + 1),
+          comment: faker.lorem.sentence({ min: 1, max: 30 }),
+          listing,
+          listingId: listing.id,
+        };
+      });
+
+    await this.reviewRepository.save(reviews);
+
+    // Обновление рейтингов пользователей и даты создания
+    for (const user of createdUsers) {
+      const received = reviews.filter(
+        (review) => review.recipient.id === user.id,
+      );
+      if (received.length > 0) {
+        const avgRating =
+          received.reduce((acc, review) => acc + review.rating, 0) /
+          received.length;
+
+        await this.userRepository.update(user.id, {
+          rating: parseFloat(avgRating.toFixed(2)),
+        });
+
+        const randomDate = getRandomDate(new Date('2013-01-01'), new Date());
+        await this.userRepository.update(user.id, {
+          createdAt: randomDate,
+        });
+      }
+    }
   }
 
   private async clearListings() {
+    await this.reviewRepository.query('TRUNCATE TABLE "review" CASCADE');
     await this.listingRepository.query('TRUNCATE TABLE "listing" CASCADE');
     await this.userRepository.query('TRUNCATE TABLE "user" CASCADE');
     await this.categoryRepository.query('TRUNCATE TABLE "category" CASCADE');

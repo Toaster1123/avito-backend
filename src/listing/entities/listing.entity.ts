@@ -1,11 +1,13 @@
 import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
 import { Category } from 'src/categories/entities/category.entity';
+import { Review } from 'src/reviews/entities/review.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -61,6 +63,10 @@ export class Listing {
 
   @Column({ type: 'uuid' })
   categoryId: string;
+
+  @OneToMany(() => Review, (review) => review.listing)
+  @Field(() => [Review], { nullable: true, description: 'Отзывы к объявлению' })
+  reviews?: Review[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   @Field({ description: 'Дата создания объявления' })
