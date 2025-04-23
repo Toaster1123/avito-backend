@@ -12,6 +12,9 @@ type Category {
   """Родительская категория"""
   parentId: String
 
+  """Родительская категория"""
+  parent: Category
+
   """Объявления в категории"""
   listings: [Listing!]!
 }

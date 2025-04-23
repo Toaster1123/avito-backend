@@ -43,7 +43,14 @@ export class ListingService {
   public async findOne(id: string) {
     return await this.listingRepository.findOne({
       where: { id },
-      relations: ['user', 'user.listings', 'user.receivedReviews', 'reviews'],
+      relations: [
+        'user',
+        'user.listings',
+        'user.receivedReviews',
+        'reviews',
+        'category',
+        'category.parent',
+      ],
     });
   }
 

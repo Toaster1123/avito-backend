@@ -1,6 +1,12 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { Listing } from 'src/listing/entities/listing.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @ObjectType()
 @Entity()
@@ -13,12 +19,19 @@ export class Category {
   @Field(() => String, { description: 'Название категории' })
   name: string;
 
-  @Column({ type: 'text', unique: true, nullable: true })
+  @Column({ type: 'text', nullable: true })
   @Field(() => String, {
     description: 'Родительская категория',
     nullable: true,
   })
   parentId: string | null;
+
+  @ManyToOne(() => Category, (category) => category.id, { nullable: true })
+  @Field(() => Category, {
+    nullable: true,
+    description: 'Родительская категория',
+  })
+  parent: Category;
 
   @OneToMany(() => Listing, (listing) => listing.category)
   @Field(() => [Listing], { description: 'Объявления в категории' })
