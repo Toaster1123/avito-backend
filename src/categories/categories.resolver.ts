@@ -1,4 +1,12 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ResolveField,
+  Parent,
+  ID,
+} from '@nestjs/graphql';
 import { CategoriesService } from './categories.service';
 import { Category } from './entities/category.entity';
 import { CreateCategoryInput } from './dto/create-category.input';
@@ -14,13 +22,21 @@ export class CategoriesResolver {
     return this.categoriesService.create(createCategoryInput);
   }
 
-  @Query(() => [Category], { name: 'categories' })
+  @Query(() => [Category], { name: 'findAllCategories' })
   findAll() {
-    return this.categoriesService.findAll();
+    return this.categoriesService.findAllWithRelations();
   }
 
-  @Query(() => Category, { name: 'category' })
-  findOne(@Args('id', { type: () => Int }) id: string) {
+  @Query(() => Category, { name: 'findOneCategory' })
+  findOne(@Args('id', { type: () => ID }) id: string) {
     return this.categoriesService.findOne(id);
+  }
+
+  @ResolveField(() => Category, { nullable: true })
+  async parent(@Parent() category: Category) {
+    if (!category.parent?.id) {
+      return null;
+    }
+    return this.categoriesService.findOne(category.parent.id);
   }
 }

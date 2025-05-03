@@ -57,12 +57,13 @@ export class Listing {
   @JoinColumn({ name: 'categoryId' })
   category: Category;
 
+  @Column({ type: 'uuid' })
+  @Field({ description: 'ID категории' })
+  categoryId: string;
+
   @Column()
   @Field({ description: 'Город' })
   city: string;
-
-  @Column({ type: 'uuid' })
-  categoryId: string;
 
   @OneToMany(() => Review, (review) => review.listing)
   @Field(() => [Review], { nullable: true, description: 'Отзывы к объявлению' })

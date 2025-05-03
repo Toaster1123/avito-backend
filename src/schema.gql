@@ -10,10 +10,13 @@ type Category {
   name: String!
 
   """Родительская категория"""
-  parentId: String
-
-  """Родительская категория"""
   parent: Category
+
+  """ID родительской категории"""
+  parentId: ID
+
+  """Дочерние категории"""
+  children: [Category!]
 
   """Объявления в категории"""
   listings: [Listing!]!
@@ -160,6 +163,9 @@ type Listing {
   """Категория объявления"""
   category: Category!
 
+  """ID категории"""
+  categoryId: String!
+
   """Город"""
   city: String!
 
@@ -171,6 +177,7 @@ type Listing {
 
   """Дата последнего обновления объявления"""
   updatedAt: Timestamp!
+  categoryBreadcrumb: [Category!]
   getUserListings(limit: Int, offset: Int): ListingPaginationResult!
 }
 
@@ -193,14 +200,14 @@ type Logout {
 }
 
 type Query {
-  findAllListings(limit: Int, offset: Int, active: Boolean): ListingPaginationResult!
+  findAllListings(limit: Int, offset: Int, active: Boolean, categoryId: ID): ListingPaginationResult!
   findOneListing(id: ID!): Listing!
   findAllUsers: [User!]!
   findOneUser(id: ID!): User!
   reviews: [Review!]
   review(id: String!): Review
-  categories: [Category!]!
-  category(id: Int!): Category!
+  findAllCategories: [Category!]!
+  findOneCategory(id: ID!): Category!
   messagesByDialog(dialogId: String!, limit: Int, offset: Int): [Message!]!
   message(id: String!): Message
 }

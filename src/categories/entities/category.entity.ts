@@ -3,13 +3,16 @@ import { Listing } from 'src/listing/entities/listing.entity';
 import {
   Column,
   Entity,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Tree,
+  TreeChildren,
+  TreeParent,
 } from 'typeorm';
 
 @ObjectType()
 @Entity()
+@Tree('closure-table')
 export class Category {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => ID, { description: 'ID категории' })
@@ -19,21 +22,25 @@ export class Category {
   @Field(() => String, { description: 'Название категории' })
   name: string;
 
-  @Column({ type: 'text', nullable: true })
-  @Field(() => String, {
-    description: 'Родительская категория',
-    nullable: true,
-  })
-  parentId: string | null;
-
-  @ManyToOne(() => Category, (category) => category.id, { nullable: true })
+  @TreeParent()
   @Field(() => Category, {
     nullable: true,
     description: 'Родительская категория',
   })
-  parent: Category;
+  parent: Category | null;
+
+  @Column({ type: 'uuid', nullable: true })
+  @Field(() => ID, { nullable: true, description: 'ID родительской категории' })
+  parentId: string | null;
+
+  @TreeChildren()
+  @Field(() => [Category], {
+    nullable: true,
+    description: 'Дочерние категории',
+  })
+  children: Category[] | null;
 
   @OneToMany(() => Listing, (listing) => listing.category)
   @Field(() => [Listing], { description: 'Объявления в категории' })
-  listings: Promise<Listing[]>;
+  listings: Listing[];
 }
