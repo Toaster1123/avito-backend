@@ -177,7 +177,6 @@ type Listing {
 
   """Дата последнего обновления объявления"""
   updatedAt: Timestamp!
-  categoryBreadcrumb: [Category!]
   getUserListings(limit: Int, offset: Int): ListingPaginationResult!
 }
 
@@ -208,6 +207,7 @@ type Query {
   review(id: String!): Review
   findAllCategories: [Category!]!
   findOneCategory(id: ID!): Category!
+  getCategoryBreadcrumb(categoryId: ID): [Category!]
   messagesByDialog(dialogId: String!, limit: Int, offset: Int): [Message!]!
   message(id: String!): Message
 }

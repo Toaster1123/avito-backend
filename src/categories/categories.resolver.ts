@@ -39,4 +39,15 @@ export class CategoriesResolver {
     }
     return this.categoriesService.findOne(category.parent.id);
   }
+
+  @Query(() => [Category], { nullable: true })
+  async getCategoryBreadcrumb(
+    @Args('categoryId', { type: () => ID, nullable: true })
+    categoryId: string | null,
+  ): Promise<Category[] | null> {
+    if (!categoryId) {
+      return null;
+    }
+    return this.categoriesService.getListingBreadcrumb(categoryId);
+  }
 }

@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { TreeRepository } from 'typeorm';
 import { Category } from './entities/category.entity';
 import { CreateCategoryInput } from './dto/create-category.input';
 
@@ -8,7 +8,7 @@ import { CreateCategoryInput } from './dto/create-category.input';
 export class CategoriesService {
   constructor(
     @InjectRepository(Category)
-    private readonly categoryRepository: Repository<Category>,
+    private readonly categoryRepository: TreeRepository<Category>,
   ) {}
 
   public async create(
@@ -66,5 +66,16 @@ export class CategoriesService {
       where: { id },
       relations: ['parent', 'children'],
     });
+  }
+
+  public async getListingBreadcrumb(categoryId: string): Promise<Category[]> {
+    const category = await this.categoryRepository.findOneBy({
+      id: categoryId,
+    });
+    if (!category) {
+      throw new NotFoundException(`Категория с ID ${categoryId} не найдена`);
+    }
+    const ancestors = await this.categoryRepository.findAncestors(category);
+    return ancestors;
   }
 }

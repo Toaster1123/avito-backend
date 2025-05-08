@@ -20,29 +20,6 @@ export class ListingService {
     return await this.listingRepository.save(createListingInput);
   }
 
-  // public async findAll(
-  //   limit = 20,
-  //   offset = 0,
-  //   where?: FindOptionsWhere<Listing> | FindOptionsWhere<Listing>[],
-  //   active?: boolean,
-  // ) {
-  //   const baseWhere = Array.isArray(where) ? where : [where ?? {}];
-  //   const mergedWhere = baseWhere.map((condition) => ({
-  //     ...condition,
-  //     ...(active !== undefined && { active }),
-  //   }));
-  //   const [listings, total] = await this.listingRepository.findAndCount({
-  //     where: mergedWhere,
-  //     relations: { user: true, category: true },
-  //     take: limit,
-  //     skip: offset,
-  //     order: { createdAt: 'DESC' },
-  //   });
-  //   return {
-  //     listings,
-  //     hasMore: offset + limit < total,
-  //   };
-  // }
   public async findAll(dto: FindListingDto) {
     const { active, categoryId, limit = 20, offset = 0, where } = dto;
 
@@ -105,27 +82,6 @@ export class ListingService {
         'category',
       ],
     });
-  }
-
-  public async getListingBreadcrumb(category: Category): Promise<Category[]> {
-    const ancestors = await this.categoryRepository.findAncestors(category);
-    console.log(ancestors);
-    return ancestors;
-  }
-
-  public async getCategoryIdsWithDescendants(
-    categoryId: string,
-  ): Promise<string[]> {
-    const category = await this.categoryRepository.findOneBy({
-      id: categoryId,
-    });
-    if (!category) {
-      throw new NotFoundException(`Категория с ID ${categoryId} не найдена`);
-    }
-
-    const descendants = await this.categoryRepository.findDescendants(category);
-
-    return descendants.map((cat) => cat.id);
   }
 
   async updateActiveStatus(
